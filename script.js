@@ -8,39 +8,41 @@ document.addEventListener('DOMContentLoaded', () => {
     let mouseX = 0, mouseY = 0;
     let outlineX = 0, outlineY = 0;
 
-    // Follow mouse
-    window.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        
-        cursorDot.style.left = `${mouseX}px`;
-        cursorDot.style.top = `${mouseY}px`;
+    if (cursorDot && cursorOutline) {
+        // Follow mouse
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
 
-        // Interactive hover states
-        const interactive = e.target.closest('a, button, input, textarea, .slider-handle, select');
-        if (interactive) {
-            cursorOutline.classList.add('expand-cursor');
-            cursorDot.classList.add('expand-cursor');
-        } else {
-            cursorOutline.classList.remove('expand-cursor');
-            cursorDot.classList.remove('expand-cursor');
-        }
-    });
+            cursorDot.style.left = `${mouseX}px`;
+            cursorDot.style.top = `${mouseY}px`;
 
-    // Smooth outline trailing
-    const animateCursor = () => {
-        let diffX = mouseX - outlineX;
-        let diffY = mouseY - outlineY;
-        
-        outlineX += diffX * 0.2;
-        outlineY += diffY * 0.2;
-        
-        cursorOutline.style.left = `${outlineX}px`;
-        cursorOutline.style.top = `${outlineY}px`;
-        
-        requestAnimationFrame(animateCursor);
-    };
-    animateCursor();
+            // Interactive hover states
+            const interactive = e.target.closest('a, button, input, textarea, .slider-handle, select');
+            if (interactive) {
+                cursorOutline.classList.add('expand-cursor');
+                cursorDot.classList.add('expand-cursor');
+            } else {
+                cursorOutline.classList.remove('expand-cursor');
+                cursorDot.classList.remove('expand-cursor');
+            }
+        });
+
+        // Smooth outline trailing
+        const animateCursor = () => {
+            let diffX = mouseX - outlineX;
+            let diffY = mouseY - outlineY;
+
+            outlineX += diffX * 0.2;
+            outlineY += diffY * 0.2;
+
+            cursorOutline.style.left = `${outlineX}px`;
+            cursorOutline.style.top = `${outlineY}px`;
+
+            requestAnimationFrame(animateCursor);
+        };
+        animateCursor();
+    }
 
     /* =========================================
        2. Scroll Progress & Sticky Nav
@@ -53,13 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const scrollTop = window.scrollY;
         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
         const progress = (scrollTop / docHeight) * 100;
-        progressBar.style.width = `${progress}%`;
+        if (progressBar) progressBar.style.width = `${progress}%`;
 
         // Sticky Nav Appearance
-        if (scrollTop > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
+        if (navbar) {
+            if (scrollTop > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
         }
     });
 
@@ -163,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageBefore = document.querySelector('.image-before');
     const sliderLine = document.querySelector('.slider-handle');
 
-    if (sliderInput) {
+    if (sliderInput && imageBefore && sliderLine) {
         sliderInput.addEventListener('input', (e) => {
             const sliderVal = e.target.value;
             // Update the clip-path of the before image filter wrapper
